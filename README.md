@@ -67,15 +67,22 @@ A personal web archiving application designed for journalists to preserve their 
 
 4. Set up the database:
 
-   Run the migration in your Supabase project:
+   Run all migrations in your Supabase project. Migrations must be run **in order**:
+
+   | Migration | Purpose |
+   |-----------|---------|
+   | `00001_initial_schema.sql` | Core tables (users, articles, sources, collections) |
+   | `00002_citations_table.sql` | Citations with quote context |
+   | `00003_citation_import_logs.sql` | Import batch tracking |
+   | `00004_add_articles_metadata.sql` | Article metadata fields |
 
    ```bash
-   # Option A: Using Supabase CLI
+   # Option A: Using Supabase CLI (recommended)
    supabase db push
 
-   # Option B: Manual
-   # Copy contents of supabase/migrations/00001_initial_schema.sql
-   # and run in Supabase Dashboard > SQL Editor
+   # Option B: Manual via SQL Editor
+   # 1. Go to Supabase Dashboard > SQL Editor
+   # 2. Copy and run each file in supabase/migrations/ in order
    ```
 
 5. Start the development server:
@@ -85,6 +92,22 @@ A personal web archiving application designed for journalists to preserve their 
    ```
 
    Open http://localhost:5173
+
+6. **(Optional) Import citation data:**
+
+   The repository includes `citations.txt` with 6,434 citation URLs from CiteIt. To import:
+
+   1. Register an account and log in at http://localhost:5173
+   2. Navigate to **Citations → Import** (or go to `/citations/import`)
+   3. Drag and drop `citations.txt` onto the upload area
+   4. Click **Start Import**
+
+   The importer will:
+   - Process citations in batches of 10
+   - Show real-time progress (imported/skipped/failed)
+   - Create Article records for citing URLs
+   - Create Source records for cited URLs
+   - Skip duplicates automatically
 
 ## Commands
 
